@@ -10,9 +10,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "young-cicd-poc-tfstate"
-    key          = "state/terraform.tfstate"
-    region       = "ap-southeast-1"
-    encrypt      = true
+    bucket  = "young-cicd-poc-tfstate"
+    key     = "state/terraform.tfstate"
+    region  = "ap-southeast-1"
+    encrypt = true
   }
 }

@@ -1,5 +1,5 @@
 variable "s3_bucket_name" {
-  type = string
+  type    = string
   default = "young-test-cicd-bucket-12345"
 }
 

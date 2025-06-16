@@ -15,12 +15,52 @@ pipeline {
                 }
             }
         }
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'master', url: 'https://github.com/XiamiYoung/jenkins'
             }
         }
-        stage('configure aws credentials') {
+        stage('Terraform init') {
+            steps {
+                script 
+                    {
+                        sh 'terraform init'
+                    }
+                }
+            }
+        stage('Terraform fmt check') {
+            steps {
+                script 
+                    {
+                        // Run terraform fmt with the check option
+                        def fmtCheck = sh(script: 'terraform fmt -check', returnStatus: true)
+    
+                        // Check the exit status
+                        if (fmtCheck != 0) {
+                            error 'Terraform files are not properly formatted. Please run "terraform fmt".'
+                        } else {
+                            echo 'All Terraform files are properly formatted.'
+                        }
+                    }
+                }
+            }
+        stage('Terraform validate') {
+            steps {
+                script 
+                    {
+                        sh 'terraform validate'
+                    }
+                }
+            }
+        stage('Terraform plan') {
+            steps {
+                script 
+                    {
+                        sh 'terraform plan'
+                    }
+                }
+            }
+        stage('Terraform apply') {
             steps {
                 script 
                     {
