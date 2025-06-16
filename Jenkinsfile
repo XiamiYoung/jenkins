@@ -13,6 +13,10 @@ pipeline {
                         env.AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
                     }
                 }
+                script 
+                    {
+                        echo 'AWS Credentials configured'
+                    }
             }
         }
         stage('Checkout Code') {
