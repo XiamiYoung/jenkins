@@ -1,7 +1,11 @@
 pipeline {
     agent any
+    parameters {
+        choice(name: 'AWS_Region', choices: ['ap-southeast-1', 'ap-southnorth-1'], description: 'AWS Region')
+        booleanParam(name: 'Run_Terraform_FMT_Check', description: 'Whether or not run terraform format check')
+    }
     environment {
-        AWS_DEFAULT_REGION = "ap-southeast-1"
+        AWS_DEFAULT_REGION = "${params.AWS_Region}"
     }
     stages {
         stage('Load AWS Credentials') {
@@ -36,15 +40,25 @@ pipeline {
             steps {
                 script 
                     {
-                        // Run terraform fmt with the check option
-                        def fmtCheck = sh(script: 'terraform fmt -check', returnStatus: true)
-    
-                        // Check the exit status
-                        if (fmtCheck != 0) {
-                            error 'Terraform files are not properly formatted. Please run "terraform fmt".'
-                        } else {
-                            echo 'All Terraform files are properly formatted.'
+                        def run_tf_check = "${params.Run_Terraform_FMT_Check}".toBoolean()
+                        
+                        if(run_tf_check){
+                            
+                            echo 'Runnig Terraform format check'
+                            
+                            // Run terraform fmt with the check option
+                            def fmtCheck = sh(script: 'terraform fmt -check', returnStatus: true)
+                            
+                            // Check the exit status
+                            if (fmtCheck != 0) {
+                                error 'Terraform files are not properly formatted. Please run "terraform fmt".'
+                            } else {
+                                echo 'All Terraform files are properly formatted.'
+                            }
+                        }else{
+                             echo 'Terraform format check is skipped'
                         }
+                        
                     }
                 }
             }
