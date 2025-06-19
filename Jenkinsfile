@@ -8,10 +8,20 @@ pipeline {
         AWS_DEFAULT_REGION = "${params.AWS_Region}"
     }
     stages {
+        stage('Example') {
+            steps {
+                script {
+                    echo "String parameter value: ${params.AWS_Region}"
+                    echo "Boolean parameter value: ${params.Run_Terraform_FMT_Check}"
+                    sh 'echo "Hello World" > file_passed_to_next_stage.txt'
+                }
+            }
+        }
         stage('Load AWS Credentials') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'young_rnd_sandbox']]) {
                     script {
+                        sh 'cat file_passed_to_next_stage.txt'
                         // Access the credentials and set them as environment variables
                         env.AWS_ACCESS_KEY_ID = "${AWS_ACCESS_KEY_ID}"
                         env.AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
